@@ -1,0 +1,24 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - cifs-utils
+
+runcmd:
+  # Secure credential handling (replace 'your_actual_password' with real password)
+  - mkdir -p /etc/smbcredentials
+  - echo "username=${storage_account_name}" | tee /etc/smbcredentials/credentials >/dev/null
+  - echo "password=${storage_account_key}" | tee -a /etc/smbcredentials/credentials >/dev/null
+  - chmod 600 /etc/smbcredentials/credentials
+
+  # Create mount point
+  - MNT_PATH="/media/${storage_account_name}/${share_name}"
+  - mkdir -p "$MNT_PATH"
+
+  # Permanent mount setup (adds to fstab)
+  - echo "//${file_share_url}/${share_name} $MNT_PATH cifs credentials=/etc/smbcredentials/credentials,serverino,nosharesock,actimeo=30,mfsymlinks,uid=1000,gid=1000 0 0" >> /etc/fstab
+
+  # Mount all filesystems
+  - mount -a -vvv
+
+final_message: "Azure Files mount configured successfully at $MNT_PATH"
