@@ -95,8 +95,11 @@ export ARM_TENANT_ID='xxxxxxxxxxxxxxxxxxxxxxx'
 
 ### Login to Azure with Service Principal 
 az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
-
+az account list -o table
 env|grep -i arm_
+
+### Give the scripts folder executable right
+chmod +x scripts/*.sh
 
 ### Replace `YOUR_PUBLIC_IP/32` in `locals.tf`
 

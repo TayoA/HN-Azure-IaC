@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "vnet" {
   })
 }
 
-# Create a public IP prefix for NAT Gateway for outbound connectivity, this is creating the public IP prefix that will be used by the NAT Gateway
+
 resource "azurerm_public_ip_prefix" "nat" {
   name                = "pip-${local.identifier}-01"
   location            = azurerm_resource_group.vnet.location

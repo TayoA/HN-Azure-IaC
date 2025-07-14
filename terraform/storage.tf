@@ -6,25 +6,25 @@ resource "azurerm_resource_group" "storage" {
   })
 }
 
-# creates stroarge account, file shares, private endpoints and management policies for the storage account
+# Creates storage account, file shares, private endpoint and management policies for the storage account
 module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
   version = "0.6.3"
 
-  account_kind                      = "StorageV2" # flexible for blobs, files, queues, and tables
+  account_kind                      = "StorageV2" 
   account_replication_type          = "GRS"
-  account_tier                      = "Standard" # Standard for cost efficiency
+  account_tier                      = "Standard" 
   name                              = replace("sa${local.identifier}stg", "-", "")
   location                          = azurerm_resource_group.storage.location
   resource_group_name               = azurerm_resource_group.storage.name
   enable_telemetry                  = false
-  min_tls_version                   = "TLS1_2" # most recent TLS version for security, protocol for https encryption
-  https_traffic_only_enabled        = true # ensures all traffic to the storage account is encrypted
-  infrastructure_encryption_enabled = true # infra used behind the scene by storage account is encrypted
-  public_network_access_enabled     = true # enabled for allowing traffic from our IP. this is to create file shares else terraform give errors 
-  shared_access_key_enabled         = true # required for mounting fileshare to the VM
+  min_tls_version                   = "TLS1_2" 
+  https_traffic_only_enabled        = true 
+  infrastructure_encryption_enabled = true 
+  public_network_access_enabled     = true 
+  shared_access_key_enabled         = true 
   blob_properties = {
-    versioning_enabled       = true # when enabled, it allows you to recover from accidental deletions or overwrites
+    versioning_enabled       = true 
     last_access_time_enabled = true
   }
   network_rules = {
@@ -35,9 +35,9 @@ module "storage_account" {
   }
   shares = {
     share1 = {
-      name        = "share-1" # to create the file share you need access to the storage account
-      quota       = 10        # 10 GB quota for the file share
-      access_tier = "Hot"     # Hot access tier for frequently accessed data
+      name        = "share-1" 
+      quota       = 10        
+      access_tier = "Hot"    
     }
   }
   storage_management_policy_rule = {
@@ -50,7 +50,7 @@ module "storage_account" {
         }
       }
       filters = {
-        blob_types = ["blockBlob"] # applies to block blobs only
+        blob_types = ["blockBlob"]
       }
     },
     "delete-after-365d" = {
@@ -72,7 +72,7 @@ module "storage_account" {
       subnet_resource_id            = module.subnets["management"].resource_id
       subresource_name              = "file"
       private_dns_zone_resource_ids = [module.files_private_dns_zone.resource_id]
-      # dns zone name for the file share, note evey service, table, file, blob has different dns zone
+  
       private_service_connection_name = "psc-${module.storage_account.name}"
       network_interface_name          = "nic-${module.storage_account.name}"
       tags = merge(local.tags, {

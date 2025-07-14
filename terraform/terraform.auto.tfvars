@@ -1,16 +1,16 @@
 location      = "UK South"
 region_short  = "uks"
 environment   = "dev"
-address_space = ["10.0.0.0/16"] # CIDR notation for the virtual network
+address_space = ["10.0.0.0/16"] 
 nat_config = {
-  prefix_length = 31 # 31 is the smallest prefix length for a public IP prefix
+  prefix_length = 31
   sku           = "Standard"
 }
 subnets = {
   "private" = {
     name                            = "private"
     address_prefix                  = "10.0.0.0/24"
-    default_outbound_access_enabled = false # private subnet does not need outbound access
+    default_outbound_access_enabled = false 
   }
   "public" = {
     name                            = "public"
@@ -18,7 +18,7 @@ subnets = {
     default_outbound_access_enabled = true
   }
   "management" = {
-    name                            = "management" # for creating private endpoint for storage account
+    name                            = "management" 
     address_prefix                  = "10.0.2.0/24"
     default_outbound_access_enabled = true
   }

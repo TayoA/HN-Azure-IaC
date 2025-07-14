@@ -7,6 +7,7 @@ resource "random_string" "random" {
   upper   = false
 }
 
+# Creates key vault and private endpoint
 module "key_vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
   version = "0.10.0"

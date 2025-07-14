@@ -6,13 +6,11 @@ resource "azurerm_resource_group" "compute" {
   })
 }
 
-# creates public key and private key - ssh key pair
 resource "tls_private_key" "this" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-# uploading the private key to the key vault
 resource "azurerm_key_vault_secret" "ssh_key" {
   key_vault_id = module.key_vault.resource_id
   name         = "ssh-key"
@@ -51,7 +49,7 @@ module "jump_box_vm" {
   resource_group_name = azurerm_resource_group.compute.name
   location            = azurerm_resource_group.compute.location
   name                = "vm-${local.identifier}-jump-box"
-  managed_identities = {    # prerequisite for using Azure AD login
+  managed_identities = {    
     system_assigned = true
   }
   network_interfaces = {
@@ -83,10 +81,10 @@ module "jump_box_vm" {
     }
   }
   enable_telemetry           = false
-  encryption_at_host_enabled = var.vm_config.encryption_at_host_enabled  # enabes encryption for the underlying host
+  encryption_at_host_enabled = var.vm_config.encryption_at_host_enabled  # enables encryption for the underlying infra
   os_disk = {
-    caching              = var.vm_config.os_disk.caching # caching improves performance by storing frequently accessed data in memory
-    storage_account_type = var.vm_config.os_disk.storage_account_type # performace and cost efficiency you want for the OS disk
+    caching              = var.vm_config.os_disk.caching 
+    storage_account_type = var.vm_config.os_disk.storage_account_type 
   }
   os_type  = var.vm_config.os_type
   sku_size = var.vm_config.sku_size
@@ -99,7 +97,7 @@ module "jump_box_vm" {
   tags = merge(local.tags, {
     component = "compute"
   })
-  extensions = { # for azure ad ssh login
+  extensions = { 
     azuread-ssh = {
       name                       = "AADLogin"
       publisher                  = "Microsoft.Azure.ActiveDirectory"
@@ -109,7 +107,6 @@ module "jump_box_vm" {
   } }
 }
 
-#######
 
 module "private_nsg" {
   source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
@@ -207,13 +204,13 @@ module "private_vm" {
 }
 
 resource "azurerm_role_assignment" "reader" {
-  role_definition_name = "Reader" # gives sudo access to the users of ssh_admin group on all the VMs under below scope
+  role_definition_name = "Reader" # gives sudo access to the users of ssh_admin group on all the VMs under the scope
   scope                = azurerm_resource_group.compute.id
   principal_id         = azuread_group.ssh_admin.object_id
 }
 
 resource "azurerm_role_assignment" "ssh_admin" {
-  role_definition_name = "Virtual Machine Administrator Login" # gives sudo access to the users of ssh_admin group on all the VMs under below scope
+  role_definition_name = "Virtual Machine Administrator Login" # gives sudo access to the users of ssh_admin group on all the VMs under the scope
   scope                = azurerm_resource_group.compute.id
   principal_id         = azuread_group.ssh_admin.object_id
 }
