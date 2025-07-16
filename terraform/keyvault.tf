@@ -18,7 +18,7 @@ module "key_vault" {
   enable_telemetry              = false
   sku_name                      = "standard"
   tenant_id                     = data.azurerm_client_config.current.tenant_id
-  public_network_access_enabled = true
+  public_network_access_enabled = true # true for now as i'm runnning on laptop and there's no private connectivity
   network_acls = {
     bypass   = "AzureServices"
     ip_rules = toset(local.ip_ranges)

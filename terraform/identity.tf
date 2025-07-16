@@ -2,7 +2,8 @@ resource "azuread_user" "example" {
   user_principal_name = "test-user@tayoayenuroyahoo.onmicrosoft.com"
   display_name        = "Test User"
   mail_nickname       = "tuser"
-  password            = "SecretP@ssw0rd" # replace with random_password, a change can be forced by changing the password
+  password            = "SecretP@ssw0rd" # this is just temporary and should be replaced with random_password, a change can be forced by changing the password
+  # force_password_change = true
   account_enabled = true
 }
 

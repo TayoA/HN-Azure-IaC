@@ -203,11 +203,11 @@ module "private_vm" {
   depends_on = [module.storage_account]
 }
 
-resource "azurerm_role_assignment" "reader" {
-  role_definition_name = "Reader" # gives sudo access to the users of ssh_admin group on all the VMs under the scope
-  scope                = azurerm_resource_group.compute.id
-  principal_id         = azuread_group.ssh_admin.object_id
-}
+# resource "azurerm_role_assignment" "reader" {
+#   role_definition_name = "Reader" # need to read VM properties to connect so we need to grant reader permission to all the VMs
+#   scope                = azurerm_resource_group.compute.id
+#   principal_id         = azuread_group.ssh_admin.object_id
+# }
 
 resource "azurerm_role_assignment" "ssh_admin" {
   role_definition_name = "Virtual Machine Administrator Login" # gives sudo access to the users of ssh_admin group on all the VMs under the scope
